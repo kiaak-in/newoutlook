@@ -79,7 +79,7 @@
         <bt:Image id="Icon.80x80" DefaultValue="https://kiaak-in.github.io/newoutlook/icon-64.png" />
       </bt:Images>
       <bt:Urls>
-        <bt:Url id="Commands.Url" DefaultValue="https://kiaak-in.github.io/newoutlook/commands.html" />
+        <bt:Url id="Commands.Url" DefaultValue="https://kiaak-in.github.io/newoutlook/command.html" />
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="GroupLabel" DefaultValue="추가기능들" />
