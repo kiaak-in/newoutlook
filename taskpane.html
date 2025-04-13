@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>내 Outlook 애드인 작업창</title>
+
+    <!-- Office.js 라이브러리 참조 -->
+    <script
+      type="text/javascript"
+      src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"
+    ></script>
+
+    <!-- 부트스트랩 CSS (선택사항) -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        padding: 10px;
+        background-color: #f8f9fa;
+      }
+      .header {
+        background-color: #0078d4;
+        color: white;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+        text-align: center;
+      }
+      .section {
+        background-color: white;
+        border-radius: 5px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        margin-bottom: 15px;
+      }
+      .btn-primary {
+        background-color: #0078d4;
+        border-color: #0078d4;
+      }
+      .btn-primary:hover {
+        background-color: #005a9e;
+        border-color: #005a9e;
+      }
+      .form-control:focus {
+        border-color: #0078d4;
+        box-shadow: 0 0 0 0.2rem rgba(0, 120, 212, 0.25);
+      }
+      #status {
+        margin-top: 10px;
+        padding: 8px;
+        border-radius: 4px;
+        display: none;
+      }
+      .status-success {
+        background-color: #d4edda;
+        color: #155724;
+      }
+      .status-error {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+    </style>
+
+    <script type="text/javascript">
+      // Office 초기화
+      Office.onReady(function (info) {
+        if (info.host === Office.HostType.Outlook) {
+          document.getElementById("app-body").style.display = "block";
+
+          // 이벤트 리스너 설정
+          document.getElementById("insert-text").onclick = insertTextToBody;
+          document.getElementById("get-subject").onclick = getEmailSubject;
+          document.getElementById("show-popup").onclick = showCustomPopup;
+        }
+      });
+
+      // 이메일 본문에 텍스트 삽입
+      function insertTextToBody() {
+        var textToInsert = document.getElementById("text-to-insert").value;
+
+        if (textToInsert) {
+          Office.context.mailbox.item.body.setSelectedDataAsync(
+            textToInsert,
+            { coercionType: Office.CoercionType.Text },
+            function (result) {
+              if (result.status === Office.AsyncResultStatus.Succeeded) {
+                showStatus("텍스트가 성공적으로 삽입되었습니다.", true);
+              } else {
+                showStatus("텍스트 삽입 실패: " + result.error.message, false);
+              }
+            }
+          );
+        } else {
+          showStatus("삽입할 텍스트를 입력해주세요.", false);
+        }
+      }
+
+      // 이메일 제목 가져오기
+      function getEmailSubject() {
+        var subject = Office.context.mailbox.item.subject;
+
+        document.getElementById("email-subject").textContent =
+          subject || "(제목 없음)";
+        document.getElementById("subject-container").style.display = "block";
+      }
+
+      // 사용자 정의 팝업 표시
+      function showCustomPopup() {
+        // 팝업 대화상자 옵션
+        var dialogOptions = {
+          width: 30,
+          height: 30,
+          displayInIframe: true,
+        };
+
+        // 팝업 대화상자 열기
+        Office.context.ui.displayDialogAsync(
+          "https://localhost:3000/popup.html",
+          dialogOptions,
+          function (result) {
+            if (result.status === Office.AsyncResultStatus.Failed) {
+              showStatus(
+                "팝업을 열지 못했습니다: " + result.error.message,
+                false
+              );
+            } else {
+              // 대화상자 객체 저장
+              var dialog = result.value;
+
+              // 대화상자 이벤트 핸들러
+              dialog.addEventHandler(
+                Office.EventType.DialogMessageReceived,
+                function (arg) {
+                  showStatus("팝업 메시지: " + arg.message, true);
+                  dialog.close();
+                }
+              );
+
+              // 대화상자가 닫힐 때 이벤트 핸들러
+              dialog.addEventHandler(
+                Office.EventType.DialogEventReceived,
+                function (arg) {
+                  console.log("대화상자 닫힘 이벤트: " + arg.message);
+                }
+              );
+            }
+          }
+        );
+      }
+
+      // 상태 메시지 표시
+      function showStatus(message, isSuccess) {
+        var statusElement = document.getElementById("status");
+        statusElement.textContent = message;
+        statusElement.className = isSuccess ? "status-success" : "status-error";
+        statusElement.style.display = "block";
+
+        // 3초 후 상태 메시지 숨기기
+        setTimeout(function () {
+          statusElement.style.display = "none";
+        }, 3000);
+      }
+    </script>
+  </head>
+  <body>
+    <!-- 애플리케이션 UI -->
+    <div id="app-body" style="display: none">
+      <div class="header">
+        <h2>내 Outlook 애드인</h2>
+      </div>
+
+      <div class="section">
+        <h5>이메일 본문에 텍스트 삽입</h5>
+        <div class="form-group">
+          <textarea
+            id="text-to-insert"
+            class="form-control"
+            rows="3"
+            placeholder="삽입할 텍스트를 입력하세요"
+          ></textarea>
+        </div>
+        <button id="insert-text" class="btn btn-primary btn-sm">
+          텍스트 삽입
+        </button>
+      </div>
+
+      <div class="section">
+        <h5>이메일 정보</h5>
+        <button id="get-subject" class="btn btn-primary btn-sm">
+          제목 가져오기
+        </button>
+        <div id="subject-container" style="display: none; margin-top: 10px">
+          <strong>이메일 제목:</strong> <span id="email-subject"></span>
+        </div>
+      </div>
+
+      <div class="section">
+        <h5>사용자 정의 팝업</h5>
+        <p>클릭하면 사용자 정의 팝업 창이 표시됩니다.</p>
+        <button id="show-popup" class="btn btn-primary btn-sm">
+          팝업 표시
+        </button>
+      </div>
+
+      <div id="status"></div>
+    </div>
+
+    <!-- 초기화 중 표시 -->
+    <div id="app-loading" class="text-center" style="padding-top: 50px">
+      <p>애드인 로딩 중...</p>
+    </div>
+  </body>
+</html>
