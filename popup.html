@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>내 팝업</title>
+    <script
+      type="text/javascript"
+      src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"
+    ></script>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f4f4f4;
+      }
+      .container {
+        background-color: white;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        text-align: center;
+      }
+      h1 {
+        color: #0078d4;
+        font-size: 18px;
+        margin-bottom: 15px;
+      }
+      p {
+        color: #333;
+        margin-bottom: 20px;
+      }
+      button {
+        background-color: #0078d4;
+        border: none;
+        border-radius: 4px;
+        color: white;
+        cursor: pointer;
+        font-size: 14px;
+        padding: 8px 16px;
+        transition: background-color 0.3s;
+      }
+      button:hover {
+        background-color: #005a9e;
+      }
+    </style>
+    <script>
+      Office.onReady(function () {
+        document.getElementById("closeButton").onclick = function () {
+          // 부모 창으로 메시지 전송
+          Office.context.ui.messageParent(
+            "팝업에서 닫기 버튼이 클릭되었습니다."
+          );
+        };
+
+        document.getElementById("applyButton").onclick = function () {
+          // 부모 창으로 메시지 전송
+          Office.context.ui.messageParent(
+            "팝업에서 적용 버튼이 클릭되었습니다."
+          );
+        };
+      });
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>내 사용자 정의 팝업</h1>
+      <p>이곳에 원하는 내용과 기능을 추가하세요.</p>
+      <button id="applyButton">적용</button>
+      <button id="closeButton">닫기</button>
+    </div>
+  </body>
+</html>
