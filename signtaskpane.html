@@ -1,0 +1,82 @@
+// taskpane.html - 작업창 UI
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <title>서명 관리</title>
+
+    <!-- Office.js 스크립트 포함 -->
+    <script
+      type="text/javascript"
+      src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"
+    ></script>
+
+    <style>
+      body {
+        font-family: "Segoe UI", "Malgun Gothic", sans-serif;
+        margin: 0;
+        padding: 10px;
+      }
+
+      h1 {
+        font-size: 18px;
+        margin-bottom: 15px;
+      }
+
+      select {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      button {
+        background-color: #0078d4;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #005a9e;
+      }
+
+      #signaturePreview {
+        border: 1px solid #e6e6e6;
+        padding: 10px;
+        margin-top: 15px;
+        min-height: 150px;
+        background-color: #f9f9f9;
+        overflow: auto;
+      }
+
+      #statusMessage {
+        margin-top: 10px;
+        color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>서명 관리</h1>
+
+    <div>
+      <label for="signatureList">서명 선택:</label>
+      <select id="signatureList" onchange="updateSignaturePreview()"></select>
+    </div>
+
+    <button id="btnApplySignature">서명 적용</button>
+
+    <div id="statusMessage"></div>
+
+    <div>
+      <h2 style="font-size: 16px; margin-top: 20px">미리보기</h2>
+      <div id="signaturePreview"></div>
+    </div>
+
+    <script src="index.js"></script>
+  </body>
+</html>
